@@ -93,6 +93,49 @@ button{font:inherit;cursor:pointer}
 .toggle input[type=range]{accent-color:var(--accent);width:110px}
 .leaflet-tooltip.lbl{background:transparent;border:0;box-shadow:none;font:600 11px var(--f-body);color:var(--fg);text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff;padding:0}
 .leaflet-tooltip.lbl:before{display:none}
+.repgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.repcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;border-top:5px solid var(--c)}
+.repcard h3{margin:0;font:700 17px var(--f-body);text-transform:none;letter-spacing:0;color:var(--fg)}.repcard p{margin:0;font-size:13px;color:var(--muted);flex:1}
+.repcard .who{font-size:12px}
+.repbtn{display:inline-block;text-align:center;background:var(--c);color:#fff;border-radius:8px;padding:10px 14px;font-weight:600;text-decoration:none;font-size:14px}
+.repbtn.off{background:#d9d4ce;color:#6b625b;pointer-events:none}
+.tabs button.tabrep{border-style:dashed}
+
+/* ---------- Informe imprimible ---------- */
+.ph{display:none}
+body.printing .main{grid-template-columns:1fr}
+body.printing .mapx,body.printing #map{width:700px!important;height:430px!important;max-width:100%}
+@page{size:A4 portrait;margin:12mm}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff!important;font-size:11.5px}
+  .wrap{max-width:none!important;padding:0!important}
+  .portal .tabs,.portal .sub,.filters,.btn,.chips,#trL,#vgL,.toggle,.leaflet-control-zoom,.leaflet-control-layers,.prbtn,.expbtn,.jusnote,footer .noprint{display:none!important}
+  .ph{display:block;border-bottom:2px solid #231c18;margin:0 0 10px;padding-bottom:8px}
+  .ph h2{font-size:20px;margin:0 0 4px}.ph p{margin:2px 0;font-size:11.5px}
+  .portal{display:none!important}
+  .main,.grid4,.wrap{display:block!important}
+  .tabpanel:not([hidden]){display:block!important}
+  .tabpanel>*{margin-bottom:12px}
+  .main>*,.grid4>*{margin-bottom:12px}
+  .card:not(.filters),.panel,.bars{display:block!important}
+  .mapx,#map,.leaflet-container{break-inside:avoid;page-break-inside:avoid}
+  .card>*,.panel>*{margin-bottom:6px}
+  .kpis,.mini,.bar,.notes p{break-inside:avoid;page-break-inside:avoid}
+  .kpis{background:#fff!important;border:1px solid #ddd!important;gap:0!important}
+  .kpi{padding:6px 8px!important;border:1px solid #eee}.kpi b{font-size:18px!important}
+  .tabpanel>header .sub,.maphint{font-size:10px!important}
+  .tabpanel>header{margin:0!important}
+  .card{padding:10px!important}
+  .notes{display:block!important;clear:both}
+  .tablewrap{overflow:visible!important}
+  svg{break-inside:avoid}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(100px,1fr))!important}
+  section,.card{box-shadow:none!important}
+  a{color:inherit;text-decoration:none}
+}
+
+.heatmode .leaflet-tile-pane{filter:grayscale(1) brightness(1.08) contrast(.9)}
 .zleg{background:rgba(255,255,255,.92);padding:6px 8px;border-radius:6px;font:12px var(--f-body);display:flex;flex-direction:column;gap:3px;box-shadow:0 1px 4px rgba(0,0,0,.2)}.zleg i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px;opacity:.75}
 .leaflet-tooltip.lblv{font-weight:500;font-size:10px;color:#4a3b31}.leaflet-tooltip.lblc{color:#7a2e8e;font-size:11px}.zlo .lblv,.zlc .lblc{display:none}
 .leaflet-tooltip.tip{font:12px var(--f-body);line-height:1.35}
@@ -109,6 +152,7 @@ button{font:inherit;cursor:pointer}
 .bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:12.5px}
 .bar .t{position:relative;padding:3px 6px;border-radius:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .bar .t i{position:absolute;inset:0 auto 0 0;background:var(--accent-soft);z-index:0;border-radius:4px}
+#tab-vbg .bar .t i{background:#e9dcf3}
 .bar .t span{position:relative;z-index:1}
 .bar em{white-space:nowrap;font-style:normal;font-family:var(--f-mono);font-size:12px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
 .recs{display:grid;gap:8px;margin:0;padding:0;list-style:none}
@@ -155,6 +199,7 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
       <button role="tab" type="button" data-tab="trata" aria-selected="false">Trata de personas</button>
       <button role="tab" type="button" data-tab="polvora" aria-selected="true">Pólvora</button>
       <button role="tab" type="button" data-tab="vbg" aria-selected="false">Violencias basadas en género</button>
+      <button role="tab" type="button" data-tab="reportar" aria-selected="false" class="tabrep">Reportar casos</button>
     </nav>
   </div>
 
@@ -193,7 +238,7 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
     <aside class="card dossier" id="vgD" aria-live="polite"></aside>
   </section>
   <section class="grid4"><div class="card panel"><h2>¿Cuándo ocurren?</h2><h3>Casos por mes · <span class="pl">Nariño</span> · <span class="per"></span></h3><div id="vgC1"></div></div><div class="card panel"><h2>¿A quiénes afecta?</h2><h3>Curso de vida de la víctima · <span class="pl">Nariño</span> · <span class="per"></span></h3><div id="vgC2"></div></div><div class="card panel"><h2>¿A qué hora?</h2><h3>Franja horaria · <span class="pl">Nariño</span> · <span class="per"></span></h3><div id="vgC3"></div></div><div class="card panel"><h2>¿Dónde y con qué?</h2><h3>Clase de sitio · <span class="pl">Nariño</span> · <span class="per"></span></h3><div id="vgC4"></div></div></section>
-  <section class="notes"><p><b>Fuente:</b> matriz de delitos con víctima mujer (Policía Nacional), años 2024 a 2026; 2026 con corte parcial.</p><p><b>Zona:</b> se cuenta como rural el caso registrado en zona rural o cuyo lugar del hecho es una vereda o un corregimiento; los demás se cuentan como urbanos. En el mapa, los círculos rojos muestran los casos urbanos en la cabecera de cada municipio y los azules los corregimientos y centros poblados rurales con 5 casos o más.</p><p><b>Criterios:</b> "Todas" suma violencia intrafamiliar, delitos sexuales, lesiones personales, amenazas y feminicidios; no incluye homicidios de mujeres porque la mayoría de los feminicidios también están registrados como homicidios. Por confidencialidad, los municipios con 1 a 4 casos se muestran como "menos de 5" y los gráficos son departamentales. Las cifras son casos denunciados o registrados, no el total de hechos.</p></section>
+  <section class="notes"><p><b>Fuente:</b> matriz de delitos con víctima mujer (Policía Nacional), años 2024 a 2026; 2026 con corte parcial.</p><p><b>Zona:</b> se cuenta como rural el caso registrado en zona rural o cuyo lugar del hecho es una vereda o un corregimiento; los demás se cuentan como urbanos. En el mapa, los círculos naranjas muestran los casos urbanos en la cabecera de cada municipio y los azules los corregimientos y centros poblados rurales con 5 casos o más.</p><p><b>Criterios:</b> "Todas" suma violencia intrafamiliar, delitos sexuales, lesiones personales, amenazas y feminicidios; no incluye homicidios de mujeres porque la mayoría de los feminicidios también están registrados como homicidios. Por confidencialidad, los municipios con 1 a 4 casos se muestran como "menos de 5" y los gráficos son departamentales. Las cifras son casos denunciados o registrados, no el total de hechos.</p></section>
 </section>
 
   <section class="tabpanel" id="tab-polvora" role="tabpanel">
@@ -255,9 +300,37 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
   </section>
   </section>
 
+  <section class="tabpanel" id="tab-reportar" role="tabpanel" hidden>
+  <!-- =====================================================================
+       ENLACES DE KOBOTOOLBOX: pegue aquí el enlace de cada formulario
+       (Kobo > FORMULARIO > Recolectar datos > En línea-Fuera de línea > Copiar).
+       Escríbalo entre las comillas, por ejemplo: vbg:'https://ee-eu.kobotoolbox.org/x/AbCd1234'
+       ===================================================================== -->
+  <script>window.KOBO={
+    vbg:'https://ee-eu.kobotoolbox.org/x/BXUtuGOx',
+    trata:'https://ee-eu.kobotoolbox.org/x/bCj7bt0I',
+    polvora:'https://ee-eu.kobotoolbox.org/x/k64Z77n1',
+    justicia:'https://ee-eu.kobotoolbox.org/x/xgTcO6iW'
+  };</script>
+  <header><div><div class="eyebrow">Para entidades municipales autorizadas</div><h1>Reportar casos</h1>
+    <p class="sub">Formularios oficiales para que personerías, comisarías de familia, inspecciones, secretarías de salud y demás entidades reporten casos y la oferta de justicia de su municipio. Lo reportado alimenta este geovisor de forma agregada.</p></div></header>
+  <section class="repgrid" id="repGrid"></section>
+  <section class="card panel">
+    <h2>Antes de reportar</h2>
+    <ul class="recs">
+      <li><b>No escriba nombres, números de documento, teléfonos ni direcciones</b> de las víctimas o personas afectadas. El formulario pide solo la información necesaria y la edad por grupo.</li>
+      <li>Diligencie <b>un formulario por cada caso</b> (o por cada sede, en oferta de justicia). Use el <b>código interno</b> de su entidad para evitar reportes duplicados; nunca el número de documento.</li>
+      <li>Ingrese con el <b>usuario y contraseña de su entidad</b> en KoboToolbox. Si aún no tiene acceso, solicítelo a la Subsecretaría de Gestión Pública.</li>
+      <li>Sin internet: instale la app <b>KoboCollect</b> en el celular, llene el formulario sin señal y envíelo cuando tenga conexión.</li>
+      <li>Las cifras se publican en el geovisor <b>solo de forma agregada</b> y con las reglas de confidencialidad (por ejemplo, "menos de 5").</li>
+    </ul>
+  </section>
+  <section class="notes"><p>Tratamiento de datos conforme a la Ley 1581 de 2012. Los reportes solo son visibles para la Subsecretaría de Gestión Pública de la Gobernación de Nariño. ¿Dudas? Comuníquese con la Subsecretaría de Gestión Pública.</p></section>
+  </section>
+
   <footer>
     <p><b>Capas de referencia:</b> límites municipales DANE (MGN 2018); corregimientos y veredas DANE/IGAC (capa Veredas 2016 publicada por Esri Colombia; en Pasto corresponde a los corregimientos); comunas de Pasto tomadas de un mapa público de ArcGIS Online, de carácter referencial; centros poblados DANE (datos.gov.co); resguardos y consejos comunitarios ANT. Los límites veredales no son oficiales para fines jurídicos.</p>
-    <p>Elaborado por [nombre / dependencia], Gobernación de Nariño. Procesamiento de datos y prototipo desarrollados con apoyo de herramientas de inteligencia artificial, con validación del equipo técnico.</p>
+    <p>Elaborado por la Subsecretaría de Gestión Pública, Gobernación de Nariño. Procesamiento de datos y prototipo desarrollados con apoyo de herramientas de inteligencia artificial, con validación del equipo técnico.</p>
   </footer>
 </div>
 
@@ -315,7 +388,7 @@ const LAYERS={
  chg:{lab:'Cambio entre temporadas',title:'Cambio de casos: temporada 2024-2025 → 2025-2026',hint:'Rojo: aumentaron; azul: disminuyeron. Responde al filtro de fecha clave.',v:a=>a.chg,type:'div'},
  pri:{lab:'Prioridad',title:'Índice de priorización municipal (por temporada)',hint:'Índice de 0 a 1 que combina casos, gravedad, menores y fabricación (ver metodología al final).',v:a=>a.pri,type:'idx'},
 };
-const SEQ=['#f6d3b3','#efa676','#de6f45','#b8401f','#7a2414'], ND='#e7e2dc';
+const SEQ=['#f6d3b3','#efa676','#de6f45','#b8401f','#7a2414'], ND='#e7e2dc', HEATG=['#fff3b0','#fdc84a','#f6862a','#d7301f','#7f0000'];
 function breaks(vals){const v=vals.filter(x=>x>0).sort((a,b)=>a-b);if(!v.length)return[1];const q=p=>v[Math.min(v.length-1,Math.floor(p*v.length))];return [...new Set([v[0],q(.4),q(.65),q(.85),q(.95)])].sort((a,b)=>a-b);}
 function scale(L,m){
   const as=Object.values(m);
@@ -342,10 +415,10 @@ if(hasL){
   map=L.map('map',{zoomSnap:.25,scrollWheelZoom:false,attributionControl:true});
   const esriAttr='Mapa base &copy; Esri y colaboradores · Límites: DANE MGN 2018';
   const bases={
-    'Gris claro':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxZoom:16,attribution:esriAttr}),
-    'Calles':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:esriAttr}),
-    'Satélite':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:esriAttr}),
-    'OpenStreetMap':L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · Límites: DANE MGN 2018'})
+    'Gris claro':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{crossOrigin:'anonymous',maxZoom:16,attribution:esriAttr}),
+    'Calles':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{crossOrigin:'anonymous',maxZoom:18,attribution:esriAttr}),
+    'Satélite':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{crossOrigin:'anonymous',maxZoom:18,attribution:esriAttr}),
+    'OpenStreetMap':L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{crossOrigin:'anonymous',maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · Límites: DANE MGN 2018'})
   };
   // OpenStreetMap solo funciona publicado en una página web (no al abrir el archivo desde el computador)
   const enWeb=location.protocol==='https:'||location.protocol==='http:';
@@ -373,20 +446,22 @@ function heatPoints(){const out=[];D.cN.forEach(([c,t,h,u,n])=>{if(!okT(t)||!okH
 function styleMap(){
   if(!hasL)return;const L_=LAYERS[st.layer],sc=scale(L_,cache),isHeat=L_.type==='heat';
   geoLayer.setStyle(f=>{const c=f.properties.DIVIPOLA,a=cache[c];
-    return isHeat?{weight:st.sel===c?2.6:.7,color:st.sel===c?'#231c18':'#8a7f77',fillOpacity:0,fillColor:'transparent'}
-      :{weight:st.sel===c?2.6:.8,color:st.sel===c?'#231c18':'#ffffff',fillOpacity:.85,fillColor:sc.col(L_.v(a),a)};});
+    return isHeat?{weight:st.sel===c?2.8:1.1,color:st.sel===c?'#111':'#3d3530',opacity:st.sel===c?1:.8,dashArray:null,fillOpacity:0,fillColor:'transparent'}
+      :{weight:st.sel===c?2.8:.9,color:st.sel===c?'#111':'#4a4039',opacity:st.sel===c?1:.55,fillOpacity:.85,fillColor:sc.col(L_.v(a),a)};});
 }
 function renderMap(){
   const L_=LAYERS[st.layer],sc=scale(L_,cache),isHeat=L_.type==='heat';
   document.getElementById('mapTitle').textContent=L_.title;document.getElementById('mapHint').textContent=L_.hint;
+  document.getElementById('map').classList.toggle('heatmode',isHeat);
   document.getElementById('heatCtl').hidden=!isHeat;document.getElementById('circCtl').hidden=isHeat;
-  if(isHeat){document.getElementById('legend').innerHTML=`<span>Menor concentración</span><i style="display:inline-block;width:160px;height:12px;border-radius:3px;background:linear-gradient(90deg,${SEQ.join(',')})"></i><span>Mayor concentración</span>`;}
+  if(isHeat){document.getElementById('legend').innerHTML=`<span>Menor concentración</span><i style="display:inline-block;width:160px;height:12px;border-radius:3px;background:linear-gradient(90deg,${HEATG.join(',')})"></i><span>Mayor concentración</span>`;}
   else document.getElementById('legend').innerHTML=sc.items.map(([c,t])=>`<span><i class="sw" style="background:${c}"></i>${t}</span>`).join('')+(st.circles?'<span>· Círculo = casos</span>':'');
   if(!hasL)return;
   styleMap();
   if(heat){map.removeLayer(heat);heat=null;}
   if(isHeat&&L.heatLayer){const pts=heatPoints();const mx=Math.max(1,...pts.map(p=>p[2]));
-    heat=L.heatLayer(pts,{radius:st.radius,blur:st.radius*.8,maxZoom:10,max:mx*.6,minOpacity:.25,gradient:{.2:SEQ[0],.4:SEQ[1],.6:SEQ[2],.8:SEQ[3],1:SEQ[4]}}).addTo(map);}
+    const pw=pts.map(([a,b,n])=>[a,b,Math.sqrt(n/mx)]);
+    heat=L.heatLayer(pw,{radius:st.radius,blur:st.radius*.7,maxZoom:9,max:.9,minOpacity:.35,gradient:{.15:HEATG[0],.35:HEATG[1],.55:HEATG[2],.78:HEATG[3],1:HEATG[4]}}).addTo(map);}
   circles.clearLayers();
   if(st.circles&&!isHeat){const mx=Math.max(1,...Object.values(cache).map(a=>a.n));
     Object.values(cache).forEach(a=>{if(a.n&&centroid[a.c])L.circleMarker(centroid[a.c],{radius:4+26*Math.sqrt(a.n/mx),color:'#b8401f',weight:1.2,fillColor:'#b8401f',fillOpacity:.25,interactive:false}).addTo(circles);});}
@@ -501,7 +576,7 @@ function ranking(){
 }
 
 /* ---------- tabs ---------- */
-const TABS=['trata','polvora','vbg'];
+const TABS=['trata','polvora','vbg','reportar'];
 function showTab(id){if(!TABS.includes(id))id='polvora';
   document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));
   TABS.forEach(k=>document.getElementById('tab-'+k).hidden=k!==id);
@@ -533,10 +608,10 @@ const bars2=(obj,opts={})=>{let e=Object.entries(obj).filter(x=>x[1]);if(opts.or
   if(!e.length)return '<p class="maphint">Sin datos con estos filtros.</p>';
   return '<div class="bars">'+e.map(([k,v])=>`<div class="bar"><div class="t" title="${esc(k)}"><i style="width:${(v/mx*100).toFixed(1)}%"></i><span>${esc(k)}</span></div><em>${fmtN(v)}${opts.nopct?'':' · '+pct(v/tot)}</em></div>`).join('')+'</div>';};
 function qbreaks(vals){const v=vals.filter(x=>x>0).sort((a,b)=>a-b);if(!v.length)return[1];const q=p=>v[Math.min(v.length-1,Math.floor(p*v.length))];return [...new Set([v[0],q(.4),q(.65),q(.85),q(.95)])].sort((a,b)=>a-b);}
-function countScale(vals,minShow){const b=qbreaks(vals.map(v=>v>=minShow?v:0));const off=5-b.length;
-  const col=v=>{if(!v)return ND2;if(v<minShow)return '#cdbfb2';let i=0;while(i<b.length-1&&v>=b[i+1])i++;return RAMP[Math.min(4,i+off)];};
-  const items=[[ND2,'0']];if(minShow>1)items.push(['#cdbfb2',`1–${minShow-1} (protegido)`]);
-  b.forEach((lo,i)=>items.push([RAMP[Math.min(4,i+off)],i<b.length-1?(b[i+1]-1>lo?`${fmtN(lo)}–${fmtN(b[i+1]-1)}`:fmtN(lo)):`${fmtN(lo)}+`]));
+function countScale(vals,minShow,ramp,prc){const RP=ramp||RAMP,PC=prc||'#cdbfb2';const b=qbreaks(vals.map(v=>v>=minShow?v:0));const off=5-b.length;
+  const col=v=>{if(!v)return ND2;if(v<minShow)return PC;let i=0;while(i<b.length-1&&v>=b[i+1])i++;return RP[Math.min(4,i+off)];};
+  const items=[[ND2,'0']];if(minShow>1)items.push([PC,`1–${minShow-1} (protegido)`]);
+  b.forEach((lo,i)=>items.push([RP[Math.min(4,i+off)],i<b.length-1?(b[i+1]-1>lo?`${fmtN(lo)}–${fmtN(b[i+1]-1)}`:fmtN(lo)):`${fmtN(lo)}+`]));
   return {col,items};}
 
 /* ---------- Centros poblados DANE (corregimientos, inspecciones, caseríos) ---------- */
@@ -549,7 +624,7 @@ function cpMatch(idx,c,name){if(!idx||!name)return null;const L=(idx[c]||[]).fil
 function placesLayer(g,idx,items,fmtN2,what){g.clearLayers();if(!idx)return {ok:0,miss:0};const agg={};let miss=0;
   items.forEach(([c,nm,n])=>{const h=cpMatch(idx,c,nm);if(!h){miss+=n;return;}const k=c+'|'+h[3];(agg[k]=agg[k]||{c,h,n:0}).n+=n;});
   const mx=Math.max(1,...Object.values(agg).map(a=>a.n));
-  Object.values(agg).forEach(a=>{L.circleMarker([a.h[1],a.h[2]],{pane:'plc',radius:5+14*Math.sqrt(a.n/mx),color:'#2f6f8f',weight:1.5,fillColor:'#2f6f8f',fillOpacity:.35})
+  Object.values(agg).forEach(a=>{L.circleMarker([a.h[1],a.h[2]],{pane:'plc',radius:3.5+8*Math.sqrt(a.n/mx),color:'#2f6f8f',weight:1.2,fillColor:'#2f6f8f',fillOpacity:.3})
     .bindTooltip(`<b>${esc(a.h[3])}</b> · ${esc(N[a.c])}<br>${esc(a.h[4]||'Centro poblado')}<br>${fmtN2(a.n)} ${what}<br><small>Ubicación del centro poblado (DANE)</small>`,{className:'tip'}).addTo(g);});
   return {ok:Object.keys(agg).length,miss};}
 function ensurePane(m){if(!m.getPane('plc')){m.createPane('plc');m.getPane('plc').style.zIndex=630;}}
@@ -628,15 +703,15 @@ function engine(M){
   // layers
   const lay=$(M.id+'L');lay.innerHTML=Object.entries(M.layers).map(([k,l])=>`<button class="chip" type="button" data-k="${k}" aria-pressed="${k===st.layer}">${l.lab}</button>`).join('');
   lay.onclick=e=>{const b=e.target.closest('button');if(!b)return;st.layer=b.dataset.k;lay.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));render();};
-  let mp=null,geo=null,labels=null,circles=null,vals={},sc=null,fz=null;
+  let mp=null,geo=null,labels=null,circles=null,vals={},sc=null,fz=null,hl=null;
   function initMap(){
     if(mp||typeof L==='undefined')return;
     mp=L.map(M.id+'Map',{zoomSnap:.25,scrollWheelZoom:false});
     const ea='Mapa base &copy; Esri y colaboradores · Límites: DANE MGN 2018';
-    const bases={'OpenStreetMap':L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap · Límites: DANE MGN 2018'}),
-      'Gris claro':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxZoom:16,attribution:ea}),
-      'Calles':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:ea}),
-      'Satélite':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:ea})};
+    const bases={'OpenStreetMap':L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{crossOrigin:'anonymous',maxZoom:19,attribution:'&copy; OpenStreetMap · Límites: DANE MGN 2018'}),
+      'Gris claro':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{crossOrigin:'anonymous',maxZoom:16,attribution:ea}),
+      'Calles':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{crossOrigin:'anonymous',maxZoom:18,attribution:ea}),
+      'Satélite':L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{crossOrigin:'anonymous',maxZoom:18,attribution:ea})};
     const web=location.protocol==='https:'||location.protocol==='http:';(web?bases['OpenStreetMap']:bases['Gris claro']).addTo(mp);
     const ctl=L.control.layers(bases,null,{collapsed:true}).addTo(mp);if(M.onMap)M.onMap(mp,ctl,st);JUSOVL(mp,ctl);
     geo=L.geoJSON(D.geo,{style:()=>({weight:.8,color:'#fff',fillOpacity:.85,fillColor:ND2}),onEachFeature:(f,l)=>{
@@ -646,26 +721,33 @@ function engine(M){
       l.bindTooltip(()=>{const Ly=M.layers[st.layer];return `<b>${esc(NM(unit(c)))}</b><br>${esc(isSub()?'Municipio: '+N[c]:S[c])}<br>${Ly.lab}: <b>${Ly.fmt?Ly.fmt(vals[c]):fmtN(vals[c]||0)}</b>`;},{sticky:true,className:'tip'});}}).addTo(mp);
     mp.fitBounds(geo.getBounds(),{padding:[10,10]});mp.on('click',()=>mp.scrollWheelZoom.enable());
     labels=L.layerGroup().addTo(mp);circles=L.layerGroup().addTo(mp);
+    (window.MAPS=window.MAPS||{})[M.tab]=mp;
+    (window.PRINTFIT=window.PRINTFIT||{})[M.tab]=()=>{mp.invalidateSize();if(fz)fz.refocus();};
     fz=SUBZ(mp,ctl,()=>geo,()=>st.sel,v=>{if(M.subLevel){const w=v&&isS(v)?'sub':v?'mun':st.niv;if(w!==st.niv){st.niv=w;$(M.id+'_niv').value=w;}}st.sel=v;render();},$(M.id+'F'),{subs:!!M.subLevel});
   }
   const isSub=()=>!!M.subLevel&&st.niv==='sub', unit=c=>isSub()?'S:'+S[c]:c;
+  const isHeat=()=>M.layers[st.layer].type==='heat';
   function styleMap(){if(!geo)return;geo.setStyle(f=>{const c=f.properties.DIVIPOLA,on=st.sel&&inU(c,st.sel),fc=sc.col(vals[c],c);
-    return isSub()?{weight:on?2.2:.5,color:on?'#231c18':fc,opacity:on?1:.9,fillOpacity:.85,fillColor:fc}:{weight:st.sel===c?2.6:.8,color:st.sel===c?'#231c18':'#fff',fillOpacity:.85,fillColor:fc};});}
+    if(isHeat())return {weight:on?2.8:1.1,color:on?'#111':'#3d3530',opacity:on?1:.8,fillOpacity:0,fillColor:'transparent'};
+    return isSub()?{weight:on?2.4:.5,color:on?'#111':fc,opacity:on?1:.9,fillOpacity:.85,fillColor:fc}:{weight:st.sel===c?2.8:.9,color:st.sel===c?'#111':'#4a4039',opacity:st.sel===c?1:.55,fillOpacity:.85,fillColor:fc};});}
   function render(){
     const Ly=M.layers[st.layer];
     vals={};CODES2.forEach(c=>vals[c]=Ly.val(c,st));let sv=null;
     if(isSub()){sv={};CODES2.forEach(c=>sv[S[c]]=(sv[S[c]]||0)+(vals[c]||0));CODES2.forEach(c=>vals[c]=sv[S[c]]);}
-    sc=Ly.type==='cat'?{col:v=>Ly.colors[v]||ND2,items:Object.entries(Ly.colors).map(([k,c])=>[c,k])}:countScale((sv?Object.values(sv):Object.values(vals)).map(v=>v||0),Ly.minShow||1);
+    sc=Ly.type==='heat'?{col:()=>'transparent',items:[]}:Ly.type==='cat'?{col:v=>Ly.colors[v]||ND2,items:Object.entries(Ly.colors).map(([k,c])=>[c,k])}:countScale((sv?Object.values(sv):Object.values(vals)).map(v=>v||0),Ly.minShow||1,M.ramp,M.protCol);
     $(M.id+'MT').textContent=(typeof Ly.title==='function'?Ly.title(st):Ly.title)+(M.period?' · '+M.period(st):'');
     $(M.id+'MH').textContent=typeof Ly.hint==='function'?Ly.hint(st):Ly.hint;
-    $(M.id+'Lg').innerHTML=sc.items.map(([c,t])=>`<span><i class="sw" style="background:${c}"></i>${t}</span>`).join('');
+    $(M.id+'Lg').innerHTML=Ly.type==='heat'?`<span>Menor concentración</span><i style="display:inline-block;width:160px;height:12px;border-radius:3px;vertical-align:-2px;margin:0 6px;background:linear-gradient(90deg,${Ly.grad.join(',')})"></i><span>Mayor concentración</span>`:sc.items.map(([c,t])=>`<span><i class="sw" style="background:${c}"></i>${t}</span>`).join('');
     $(M.id+'K').innerHTML=M.kpis(st).map(([v,l,s])=>`<div class="kpi"><b>${v}</b><span>${l}</span><small>${s||''}</small></div>`).join('');
     $(M.id+'D').innerHTML=M.dossier(st,st.sel);
     const cb=$(M.id+'Clear');if(cb)cb.onclick=()=>{st.sel=null;render();};
     M.charts(st).forEach(([id,html])=>{$(id).innerHTML=html;});
     if(M.period)document.querySelectorAll('#tab-'+M.tab+' .per').forEach(x=>x.textContent=M.period(st));
     if(M.onRender)M.onRender(st,mp);
-    if(mp){styleMap();labels.clearLayers();
+    if(mp){styleMap();labels.clearLayers();mp.getContainer().classList.toggle('heatmode',Ly.type==='heat');
+      if(hl){mp.removeLayer(hl);hl=null;}
+      if(Ly.type==='heat'&&L.heatLayer){const pts=Ly.pts(st,geo);const mx=Math.max(1,...pts.map(p=>p[2]));const G=Ly.grad;
+        hl=L.heatLayer(pts.map(([a,b,n])=>[a,b,Math.sqrt(n/mx)]),{radius:30,blur:22,maxZoom:9,max:.9,minOpacity:.35,gradient:{.15:G[0],.35:G[1],.55:G[2],.78:G[3],1:G[4]}}).addTo(mp);}
       if(isSub()){const bs={};geo.getLayers().forEach(l=>{const u=S[l.feature.properties.DIVIPOLA];(bs[u]=bs[u]||L.latLngBounds([])).extend(l.getBounds());});
         Object.entries(bs).forEach(([u,b])=>L.marker(b.getCenter(),{opacity:0,interactive:false,keyboard:false}).bindTooltip(esc(u)+'<br>'+(Ly.fmt?Ly.fmt(sv[u]):fmtN(sv[u]||0)),{permanent:true,direction:'center',className:'lbl'}).addTo(labels));if(fz)fz.focus(st.sel);return;}
       const top=CODES2.filter(c=>Ly.type==='cat'?false:(vals[c]||0)>0).sort((a,b)=>(vals[b]||0)-(vals[a]||0)).slice(0,6);
@@ -742,24 +824,28 @@ const sOk=(c,st)=>inU(c,st.sel);
 const yIx=st=>st.y==='all'?-1:YR.indexOf(+st.y), dIx=st=>st.d==='all'?-1:+st.d;
 const pickBP=(arr,st,c)=>arr.filter(r=>inU(r[0],c)&&r[2]===yIx(st)&&r[3]===dIx(st));
 const muniTxt=st=>st.sel?' en '+NM(st.sel):'';
-const vbg=engine({id:'vg',tab:'vbg',subLevel:true,period:st=>st.y==='all'?'2024 a 2026':st.y,
+const vbg=engine({id:'vg',tab:'vbg',subLevel:true,ramp:['#e4d4f0','#c3a2de','#9a6cc6','#6e3fa3','#45206e'],protCol:'#d8d0de',period:st=>st.y==='all'?'2024 a 2026':st.y,
   filters:[{key:'y',label:'Año',def:'all',opts:[['all','2024 a 2026'],...YR.map(y=>[String(y),y===2026?'2026 (hasta '+V.corte.split('-').reverse().join('/')+')':String(y)])]},
            {key:'d',label:'Tipo de violencia',def:'all',opts:[['all','Todas (sin homicidios)'],...DL.map((d,i)=>[String(i),d])]},
            {key:'niv',label:'Ver por',def:'mun',opts:[['mun','Municipio'],['sub','Subregión']],clearSel:true},
            {key:'z',label:'Zona',def:'all',opts:[['all','Urbana y rural'],['urb','Urbana'],['rur','Rural']],onChange:v=>Object.assign(V,X.vbgz.Z[v])}],
   onMap:(m,ctl,st)=>{ensurePane(m);vPl.u=L.layerGroup().addTo(m);vPl.g=L.layerGroup().addTo(m);
-    ctl.addOverlay(vPl.u,'<i class="pin" style="background:#b03a2e"></i>Zona urbana: casos en la cabecera municipal');
+    ctl.addOverlay(vPl.u,'<i class="pin" style="background:#d9822b"></i>Zona urbana: casos en la cabecera municipal');
     ctl.addOverlay(vPl.g,'<i class="pin" style="background:#2f6f8f"></i>Zona rural: corregimientos y centros poblados (5 casos o más)');
-    const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{const d=L.DomUtil.create('div','zleg');d.innerHTML='<span><i style="background:#b03a2e"></i>Urbano (cabecera)</span><span><i style="background:#2f6f8f"></i>Rural (corregimiento / centro poblado)</span>';return d;};lg.addTo(m);},
+    const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{const d=L.DomUtil.create('div','zleg');d.innerHTML='<span><i style="background:#d9822b"></i>Urbano (cabecera)</span><span><i style="background:#2f6f8f"></i>Rural (corregimiento / centro poblado)</span>';return d;};lg.addTo(m);},
   onRender:(st)=>{if(!vPl.g)return;
     vPl.u.clearLayers();
-    if(st.z!=='rur'){const U=X.vbgz.Z.urb.m,agg={};U.forEach(r=>{if(dOk(r[1],st)&&yOk(r[2],st)&&sOk(r[0],st))agg[r[0]]=(agg[r[0]]||0)+r[3];});
+    if(st.z!=='rur'&&st.layer!=='heat'){const U=X.vbgz.Z.urb.m,agg={};U.forEach(r=>{if(dOk(r[1],st)&&yOk(r[2],st)&&sOk(r[0],st))agg[r[0]]=(agg[r[0]]||0)+r[3];});
       const mx=Math.max(1,...Object.values(agg));
       Object.entries(agg).forEach(([c,n])=>{const p=CAB[c];if(!p||!n)return;
-        L.circleMarker(p,{pane:'plc',radius:4+16*Math.sqrt(n/mx),color:'#b03a2e',weight:1.5,fillColor:'#b03a2e',fillOpacity:.35}).bindTooltip(`<b>${esc(N[c])} · zona urbana</b><br>${prot(n)} casos<br><small>Ubicación: cabecera municipal</small>`,{className:'tip'}).addTo(vPl.u);});}
+        L.circleMarker(p,{pane:'plc',radius:4+16*Math.sqrt(n/mx),color:'#d9822b',weight:1.5,fillColor:'#d9822b',fillOpacity:.35}).bindTooltip(`<b>${esc(N[c])} · zona urbana</b><br>${prot(n)} casos<br><small>Ubicación: cabecera municipal</small>`,{className:'tip'}).addTo(vPl.u);});}
     if(st.z==='urb'){vPl.g.clearLayers();return;}
     cpLoad().then(idx=>{const it=pickBP(X.vbgz.places,st,st.sel).map(r=>[r[0],r[1],r[4]]);vPl.res=placesLayer(vPl.g,idx,it,v=>fmtN(v),'casos');});},
-  layers:{cas:{lab:'Casos',title:st=>'Casos de violencia contra las mujeres por '+(st.niv==='sub'?'subregión':'municipio'),hint:st=>st.niv==='sub'?'Casos con víctima mujer sumados por subregión (13 subregiones). Al agrupar, la mayoría de cifras se muestran exactas; solo las de 1 a 4 casos aparecen como "menos de 5".':'Casos con víctima mujer por municipio. Los municipios con 1 a 4 casos se muestran como "menos de 5" para proteger la confidencialidad. Para ver más cifras exactas, use "Ver por: Subregión".',val:vcount,minShow:5,fmt:v=>prot(v||0)}},
+  layers:{cas:{lab:'Casos',title:st=>'Casos de violencia contra las mujeres por '+(st.niv==='sub'?'subregión':'municipio'),hint:st=>st.niv==='sub'?'Casos con víctima mujer sumados por subregión (13 subregiones). Al agrupar, la mayoría de cifras se muestran exactas; solo las de 1 a 4 casos aparecen como "menos de 5".':'Casos con víctima mujer por municipio. Los municipios con 1 a 4 casos se muestran como "menos de 5" para proteger la confidencialidad. Para ver más cifras exactas, use "Ver por: Subregión".',val:vcount,minShow:5,fmt:v=>prot(v||0)},
+    heat:{lab:'Mapa de calor',type:'heat',grad:['#f3e8ff','#d8b4fe','#a855f7','#7e22ce','#3b0764'],title:st=>'Mapa de calor de violencias contra las mujeres',hint:st=>'Las zonas más intensas concentran más casos. Ubicación aproximada: los casos urbanos en la cabecera municipal y los rurales en el centro del municipio.',val:vcount,fmt:v=>prot(v||0),
+      pts:(st,geo)=>{const out=[],Z=X.vbgz.Z,cen={};geo.getLayers().forEach(l=>cen[l.feature.properties.DIVIPOLA]=l.getBounds().getCenter());
+        [['urb',1],['rur',0]].forEach(([z,u])=>{if(st.z!=='all'&&st.z!==z)return;const a={};Z[z].m.forEach(r=>{if(sOk(r[0],st)&&dOk(r[1],st)&&yOk(r[2],st))a[r[0]]=(a[r[0]]||0)+r[3];});
+          Object.entries(a).forEach(([c,n])=>{const p=u&&CAB[c]?CAB[c]:cen[c]?[cen[c].lat,cen[c].lng]:null;if(p&&n)out.push([p[0],p[1],n]);});});return out;}}},
   kpis:st=>{const k=[];const f=st.sel?prot:fmtN;const zt=st.z==='urb'?' · zona urbana':st.z==='rur'?' · zona rural':'';
     const tot=V.m.filter(r=>sOk(r[0],st)&&dOk(r[1],st)&&yOk(r[2],st)).reduce((s,r)=>s+r[3],0);k.push([f(tot),'casos'+muniTxt(st),(st.d==='all'?'todas las violencias (sin homicidios)':DL[+st.d])+zt]);
     ['Violencia intrafamiliar','Delitos sexuales','Lesiones personales','Amenazas','Feminicidio'].forEach(n=>{const i=DL.indexOf(n);const on=st.d==='all'||+st.d===i;
@@ -792,6 +878,7 @@ try{if(typeof map!=='undefined'&&map&&window.POLCTRL)JUSOVL(map,window.POLCTRL);
   const prot2=v=>v>0&&v<5?'menos de 5':fmtN(v);
   const pfz=SUBZ(map,window.POLCTRL,()=>geoLayer,()=>st.sel,v=>{st.sel=v;render();},document.getElementById('fZon').closest('.f').parentNode);
   window.POLREFOCUS=()=>pfz.refocus();
+  (window.PRINTFIT=window.PRINTFIT||{}).polvora=()=>{map.invalidateSize();pfz.refocus();};
   window.POLPLACES=()=>{pfz.focus(st.sel);cpLoad().then(idx=>{const it=X.polz.places.filter(r=>okT(r[2])&&okH(r[3])).map(r=>[r[0],r[1],r[4]]);placesLayer(g,idx,it,prot2,'casos');});};
   window.POLBARRIOS=sel=>{const bb={};X.polz.barrios.filter(r=>r[0]===sel).forEach(r=>bb[r[1]]=r[2]);const pp={};let sin=0;
     X.polz.places.filter(r=>r[0]===sel&&okT(r[2])&&okH(r[3])).forEach(r=>{if(!r[1]){sin+=r[4];return;}const k=r[1].charAt(0)+r[1].slice(1).toLowerCase();pp[k]=(pp[k]||0)+r[4];});
@@ -805,6 +892,122 @@ try{if(typeof map!=='undefined'&&map&&window.POLCTRL)JUSOVL(map,window.POLCTRL);
 })();
 window.TABHOOK=id=>{({trata,vbg})[id==='trata'?'trata':id==='vbg'?'vbg':'_']?.show();};
 const h=(location.hash||'').slice(1);if(['trata','vbg'].includes(h))window.TABHOOK(h);
+})();
+
+/* ---------- Informe imprimible ---------- */
+(function(){
+  const TIT={trata:'Trata de personas',polvora:'Lesiones por pólvora pirotécnica',vbg:'Violencias basadas en género'};
+  function filtros(panel){const out=[];panel.querySelectorAll('.filters select').forEach(sel=>{const lab=panel.querySelector('label[for="'+sel.id+'"]');const o=sel.options[sel.selectedIndex];if(o)out.push((lab?lab.textContent.replace(' (zoom)',''):'Filtro')+': '+o.text);});return out;}
+  function imprimir(id){const panel=document.getElementById('tab-'+id);if(!panel)return;
+    let ph=panel.querySelector('.ph');if(!ph){ph=document.createElement('div');ph.className='ph';panel.insertBefore(ph,panel.firstChild);}
+    const hoy=new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
+    ph.innerHTML=`<p style="font-size:10.5px;letter-spacing:.06em;text-transform:uppercase">Gobernación de Nariño · Geovisor departamental</p><h2>Informe: ${esc(TIT[id]||'')}</h2><p><b>Filtros aplicados:</b> ${filtros(panel).map(esc).join(' · ')||'ninguno'}</p><p>Generado el ${esc(hoy)} desde ${esc(location.href.split('#')[0])}. Datos agregados; no contiene información personal.</p>`;
+    document.body.classList.add('printing');const fit=(window.PRINTFIT||{})[id];
+    setTimeout(()=>{try{fit&&fit();}catch(e){}setTimeout(()=>window.print(),900);},80);}
+  window.addEventListener('afterprint',()=>{document.body.classList.remove('printing');const id=(location.hash||'#polvora').slice(1);setTimeout(()=>{try{(window.PRINTFIT||{})[id]&&window.PRINTFIT[id]();}catch(e){}},80);});
+  document.querySelectorAll('.tabpanel').forEach(panel=>{const id=panel.id.replace('tab-','');if(id==='reportar')return;const hd=panel.querySelector('header');if(!hd)return;
+    const b=document.createElement('button');b.type='button';b.className='btn prbtn';b.textContent='Imprimir informe';b.title='Imprime o guarda en PDF esta pestaña con los filtros actuales';b.onclick=()=>imprimir(id);
+    let box=hd.querySelector('.hbtns');if(!box){box=document.createElement('div');box.className='hbtns';box.style.cssText='display:flex;gap:8px;flex-wrap:wrap';const r=hd.querySelector('#reset');if(r){hd.insertBefore(box,r);box.appendChild(r);}else hd.appendChild(box);}
+    box.insertBefore(b,box.firstChild);});
+})();
+
+/* ---------- Exportar mapa (PNG con logos) ---------- */
+(function(){
+  const CFG={polvora:{lg:'legend',mt:'mapTitle',src:'Fuente: Sivigila, evento 452 (lesiones por pólvora), Nariño.',sello:'sello_polvora.png'},
+             vbg:{lg:'vgLg',mt:'vgMT',src:'Fuente: Policía Nacional, delitos con víctima mujer, 2024-2026.'},
+             trata:{lg:'trLg',mt:'trMT',src:'Fuente: base unificada de casos de trata de personas, Nariño, 2024-2026.'}};
+  const getMap=id=>id==='polvora'?(typeof map!=='undefined'?map:null):(window.MAPS||{})[id];
+  const loadImg=src=>new Promise(r=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src;});
+  function filtrosTxt(panel){const out=[];panel.querySelectorAll('.filters select').forEach(sel=>{const lab=panel.querySelector('label[for="'+sel.id+'"]');const o=sel.options[sel.selectedIndex];if(o)out.push((lab?lab.textContent.replace(' (zoom)',''):'Filtro')+': '+o.text);});return out.join(' · ');}
+  function wrap(ctx,txt,maxW){const w=txt.split(' '),lines=[];let l='';w.forEach(x=>{const t=l?l+' '+x:x;if(ctx.measureText(t).width>maxW&&l){lines.push(l);l=x;}else l=t;});if(l)lines.push(l);return lines;}
+  const vis=el=>{const cs=getComputedStyle(el);return cs.display!=='none'&&cs.visibility!=='hidden'&&+cs.opacity!==0&&el.getClientRects().length;};
+  async function drawMap(m,ctx,ox,oy,S){
+    const box=m.getContainer().getBoundingClientRect(),W=box.width,H=box.height;let tainted=false;
+    ctx.save();ctx.beginPath();ctx.rect(ox,oy,W*S,H*S);ctx.clip();ctx.fillStyle='#e9eef0';ctx.fillRect(ox,oy,W*S,H*S);
+    const R=el=>{const r=el.getBoundingClientRect();return [ox+(r.left-box.left)*S,oy+(r.top-box.top)*S,r.width*S,r.height*S];};
+    const CP=ll=>{const c=m.latLngToContainerPoint(ll);return [ox+c.x*S,oy+c.y*S];};
+    const rings=ll=>!ll||!ll.length?[]:(ll[0] instanceof L.LatLng?[ll]:ll.reduce((a,x)=>a.concat(rings(x)),[]));
+    const paths={};m.eachLayer(l=>{if(l instanceof L.Path&&l._map){const pn=l.options.pane||'overlayPane';(paths[pn]=paths[pn]||[]).push(l);}});
+    function drawPath(l){const o=l.options;if(!o.stroke&&!o.fill)return;ctx.beginPath();
+      if(l instanceof L.CircleMarker){const [x,y]=CP(l.getLatLng());ctx.arc(x,y,(o.radius||5)*S,0,2*Math.PI);}
+      else{const rs=rings(l.getLatLngs());if(!rs.length)return;const closed=l instanceof L.Polygon;rs.forEach(ring=>{ring.forEach((p,k)=>{const [x,y]=CP(p);k?ctx.lineTo(x,y):ctx.moveTo(x,y);});if(closed)ctx.closePath();});}
+      if(o.fill){ctx.globalAlpha=o.fillOpacity==null?.2:o.fillOpacity;ctx.fillStyle=o.fillColor||o.color;ctx.fill('evenodd');}
+      if(o.stroke!==false&&o.weight>0&&o.opacity>0){ctx.globalAlpha=o.opacity==null?1:o.opacity;ctx.strokeStyle=o.color;ctx.lineWidth=o.weight*S;ctx.lineJoin='round';ctx.lineCap='round';
+        ctx.setLineDash(o.dashArray?String(o.dashArray).split(/[ ,]+/).map(v=>+v*S):[]);ctx.stroke();ctx.setLineDash([]);}
+      ctx.globalAlpha=1;}
+    const panes=Object.entries(m.getPanes()).filter(([k])=>k!=='mapPane').sort((a,b)=>(+getComputedStyle(a[1]).zIndex||0)-(+getComputedStyle(b[1]).zIndex||0));
+    for(const [pn,pane] of panes){if(!vis(pane))continue;const cs=getComputedStyle(pane);
+      ctx.save();if(cs.filter&&cs.filter!=='none')ctx.filter=cs.filter;
+      for(const el of pane.querySelectorAll('img.leaflet-tile-loaded, canvas')){if(!vis(el))continue;const [x,y,w,h]=R(el);if(w<=0||h<=0)continue;try{ctx.drawImage(el,x,y,w,h);}catch(e){tainted=true;}}
+      ctx.restore();
+      (paths[pn]||[]).forEach(l=>{try{drawPath(l);}catch(e){}});
+      for(const el of pane.querySelectorAll('.leaflet-marker-icon, .leaflet-tooltip.lbl')){
+        if(!vis(el))continue;const [x,y,w,h]=R(el);if(w<=0||h<=0)continue;
+        if(el.classList.contains('leaflet-marker-icon')){const pin=el.querySelector('.pin');if(!pin||!vis(pin))continue;const [px,py,pw,ph]=R(pin);const c=getComputedStyle(pin);ctx.beginPath();ctx.arc(px+pw/2,py+ph/2,Math.min(pw,ph)/2,0,2*Math.PI);ctx.fillStyle=c.backgroundColor;ctx.fill();ctx.lineWidth=1.5*S;ctx.strokeStyle='#fff';ctx.stroke();
+          if(pin.textContent.trim()){ctx.fillStyle='#fff';ctx.font=`600 ${9*S}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(pin.textContent.trim(),px+pw/2,py+ph/2);}}
+        else{const c=getComputedStyle(el);const fs=parseFloat(c.fontSize)||11;ctx.font=`${c.fontWeight} ${fs*S}px Arial`;ctx.textAlign='center';ctx.textBaseline='middle';
+          const lines=el.innerText.split('\n');lines.forEach((t,i)=>{const yy=y+h/2+(i-(lines.length-1)/2)*fs*1.15*S;ctx.lineWidth=3*S;ctx.strokeStyle='rgba(255,255,255,.95)';ctx.strokeText(t,x+w/2,yy);ctx.fillStyle=c.color;ctx.fillText(t,x+w/2,yy);});}
+      }}
+    ctx.restore();return {W,H,tainted};}
+  function legendItems(el){const items=[];if(!el)return items;
+    el.querySelectorAll(':scope > span, :scope > i').forEach(n=>{if(n.tagName==='I'){const cols=(n.style.background||n.getAttribute('style')||'').match(/#[0-9a-fA-F]{6}|rgb\([^)]*\)/g);if(cols)items.push({grad:cols});return;}
+      const sw=n.querySelector('i');items.push({col:sw?getComputedStyle(sw).backgroundColor:null,round:sw&&getComputedStyle(sw).borderRadius==='50%',txt:n.textContent.trim()});});return items;}
+  async function exportar(id){const m=getMap(id),cf=CFG[id],panel=document.getElementById('tab-'+id);if(!m||!cf)return;
+    const btn=panel.querySelector('.expbtn');if(btn){btn.disabled=true;btn.textContent='Generando…';}
+    try{
+    const S=2,box=m.getContainer().getBoundingClientRect(),W=Math.round(box.width),H=Math.round(box.height);
+    const PAD=24,HEAD=118,FOOT=118,CW=W+PAD*2;const cv=document.createElement('canvas');cv.width=CW*S;cv.height=(HEAD+H+FOOT)*S;const ctx=cv.getContext('2d');
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);
+    // encabezado: logos
+    let lx=PAD*S;const web=/^https?:$/.test(location.protocol);const logos=web?[await loadImg('logo_gobernacion.png')]:[];if(web&&cf.sello)logos.push(await loadImg(cf.sello));
+    for(const im of logos){if(!im)continue;const h=64*S,w=im.naturalWidth*h/im.naturalHeight;ctx.drawImage(im,lx,18*S,w,h);lx+=w+14*S;}
+    const tx=lx===PAD*S?PAD*S:lx+4*S,maxW=cv.width-tx-PAD*S;
+    ctx.fillStyle='#8a2c1c';ctx.font=`600 ${11*S}px Arial`;ctx.textAlign='left';ctx.textBaseline='alphabetic';ctx.fillText('GOBERNACIÓN DE NARIÑO · GEOVISOR DEPARTAMENTAL',tx,30*S);
+    ctx.fillStyle='#231c18';ctx.font=`700 ${19*S}px Arial`;wrap(ctx,(document.getElementById(cf.mt)||{}).textContent||'Mapa',maxW).slice(0,2).forEach((l,i)=>ctx.fillText(l,tx,(54+i*22)*S));
+    ctx.fillStyle='#55504b';ctx.font=`${11*S}px Arial`;wrap(ctx,filtrosTxt(panel),maxW).slice(0,2).forEach((l,i)=>ctx.fillText(l,tx,(84+i*14)*S));
+    ctx.strokeStyle='#231c18';ctx.lineWidth=1.5*S;ctx.beginPath();ctx.moveTo(PAD*S,(HEAD-8)*S);ctx.lineTo(cv.width-PAD*S,(HEAD-8)*S);ctx.stroke();
+    // mapa (espera a que carguen las teselas)
+    for(let i=0;i<40;i++){const ts=[...m.getContainer().querySelectorAll('img.leaflet-tile')];if(ts.every(t=>t.complete))break;await new Promise(z=>setTimeout(z,100));}
+    const r=await drawMap(m,ctx,PAD*S,HEAD*S,S);
+    ctx.strokeStyle='#bbb';ctx.lineWidth=1*S;ctx.strokeRect(PAD*S,HEAD*S,W*S,H*S);
+    // norte
+    const nx=(PAD+W-34)*S,ny=(HEAD+20)*S;ctx.fillStyle='rgba(255,255,255,.9)';ctx.fillRect(nx-16*S,ny-8*S,32*S,50*S);ctx.fillStyle='#231c18';ctx.beginPath();ctx.moveTo(nx,ny);ctx.lineTo(nx-9*S,ny+26*S);ctx.lineTo(nx,ny+20*S);ctx.lineTo(nx+9*S,ny+26*S);ctx.closePath();ctx.fill();
+    ctx.font=`700 ${12*S}px Arial`;ctx.textAlign='center';ctx.fillText('N',nx,ny+40*S);
+    // escala
+    const yC=H/2,p1=m.containerPointToLatLng([0,yC]),p2=m.containerPointToLatLng([100,yC]),mpp=m.distance(p1,p2)/100;
+    const nice=[100,200,500,1000,2000,5000,10000,20000,50000,100000];let len=nice[0];nice.forEach(v=>{if(v/mpp<=W*0.25)len=v;});const px=len/mpp;
+    const sx=(PAD+12)*S,sy=(HEAD+H-16)*S;ctx.fillStyle='rgba(255,255,255,.9)';ctx.fillRect(sx-6*S,sy-18*S,(px+70)*S,26*S);
+    ctx.fillStyle='#231c18';ctx.fillRect(sx,sy,px*S/2,4*S);ctx.strokeStyle='#231c18';ctx.lineWidth=1*S;ctx.strokeRect(sx,sy,px*S,4*S);
+    ctx.font=`${10*S}px Arial`;ctx.textAlign='left';ctx.fillText('0',sx-2*S,sy-4*S);ctx.fillText(len>=1000?(len/1000)+' km':len+' m',sx+px*S+4*S,sy+5*S);
+    // leyenda
+    let ly=(HEAD+H+22)*S,lxx=PAD*S;ctx.textAlign='left';ctx.font=`600 ${11*S}px Arial`;ctx.fillStyle='#231c18';ctx.fillText('Convenciones',lxx,ly);ly+=8*S;
+    const items=legendItems(document.getElementById(cf.lg)).concat(legendItems(m.getContainer().querySelector('.zleg')));
+    ctx.font=`${10.5*S}px Arial`;let cx=lxx,cy=ly+12*S;
+    items.forEach(it=>{let w;if(it.grad){w=130*S;const g=ctx.createLinearGradient(cx,0,cx+w,0);it.grad.forEach((c,i)=>g.addColorStop(i/(it.grad.length-1),c));if(cx+w>cv.width-PAD*S){cx=lxx;cy+=18*S;}ctx.fillStyle=g;ctx.fillRect(cx,cy-9*S,w,11*S);cx+=w+8*S;return;}
+      const tw=ctx.measureText(it.txt).width;w=(it.col?18*S:0)+tw+14*S;if(cx+w>cv.width-PAD*S){cx=lxx;cy+=18*S;}
+      if(it.col){ctx.fillStyle=it.col;if(it.round){ctx.beginPath();ctx.arc(cx+6*S,cy-3.5*S,5.5*S,0,2*Math.PI);ctx.fill();}else{ctx.fillRect(cx,cy-9*S,12*S,11*S);ctx.strokeStyle='#ccc';ctx.lineWidth=1;ctx.strokeRect(cx,cy-9*S,12*S,11*S);}cx+=18*S;}
+      ctx.fillStyle='#231c18';ctx.fillText(it.txt,cx,cy);cx+=tw+14*S;});
+    // pie
+    const hoy=new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
+    const pie=[cf.src+' Límites municipales: DANE MGN 2018. Mapa base: '+(r.tainted?'no disponible en la exportación':'© OpenStreetMap / Esri')+'.','Datos agregados; no contiene información personal. Generado el '+hoy+' · Gobernación de Nariño, Subsecretaría de Gestión Pública.'];
+    ctx.fillStyle='#55504b';ctx.font=`${9.5*S}px Arial`;let fy=(HEAD+H+FOOT-30)*S;pie.forEach(t=>{wrap(ctx,t,cv.width-PAD*2*S).forEach(l=>{ctx.fillText(l,PAD*S,fy);fy+=13*S;});});
+    const fname='mapa_'+id+'_'+new Date().toISOString().slice(0,10)+'.png';
+    await new Promise((res,rej)=>{try{cv.toBlob(b=>{if(!b){rej(new Error('blob'));return;}const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fname;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);res();},'image/png');}catch(e){rej(e);}});
+    }catch(e){alert('No se pudo generar la imagen del mapa. Pruebe con el mapa base "Gris claro" o "Calles" (botón de capas) y vuelva a intentar.');}
+    finally{if(btn){btn.disabled=false;btn.textContent='Exportar mapa (PNG)';}}}
+  window.EXPORTMAP=exportar;
+  ['polvora','vbg','trata'].forEach(id=>{const cf=CFG[id],h=document.getElementById(cf.mt);if(!h)return;const head=h.closest('.maphead')||h.parentNode;
+    const b=document.createElement('button');b.type='button';b.className='btn expbtn';b.textContent='Exportar mapa (PNG)';b.title='Descarga una imagen del mapa actual con logos, título, filtros, leyenda, escala y fuente';b.onclick=()=>exportar(id);
+    head.appendChild(b);});
+})();
+
+/* ---------- Pestaña Reportar casos (enlaces a KoboToolbox) ---------- */
+(function(){const g=document.getElementById('repGrid');if(!g)return;const K=window.KOBO||{};
+  const F=[['vbg','Violencia basada en género','#6e3fa3','Casos de violencia contra mujeres y personas afectadas por violencias basadas en género.','Comisarías de familia, personerías, enlaces de género, salud.'],
+    ['trata','Trata de personas','#2f6f8f','Casos identificados o en atención de posibles víctimas de trata de personas.','Personerías, enlaces de víctimas, Policía.'],
+    ['polvora','Lesiones por pólvora','#b8401f','Personas lesionadas por pólvora pirotécnica (complementa el Sivigila).','Secretarías de salud, ESE e IPS, personerías.'],
+    ['justicia','Oferta de justicia','#3d6b3a','Sedes y figuras de justicia del municipio: comisarías, inspecciones, conciliadores, jueces de paz, justicia propia.','Alcaldías (enlace de gobierno), personerías.']];
+  g.innerHTML=F.map(([k,t,c,d,w])=>{const url=(K[k]||'').trim();return `<div class="repcard" style="--c:${c}"><h3>${esc(t)}</h3><p>${esc(d)}</p><div class="who"><b>Quién reporta:</b> ${esc(w)}</div>${url?`<a class="repbtn" href="${esc(url)}" target="_blank" rel="noopener">Abrir formulario</a>`:`<span class="repbtn off">Enlace en preparación</span>`}</div>`;}).join('');
 })();
 
 </script>
