@@ -767,7 +767,17 @@ const hidden=st=>BR(st).n<MINB;
 const HMSG=st=>`<p class="maphint">En ${per(st)} hay ${BR(st).n} casos. Con menos de ${MINB} casos no se muestran las características de las víctimas, para proteger su identidad. Elija "2024 a 2026" o "2024".</p>`;
 const brp=(st,k,order)=>hidden(st)?HMSG(st):bars2(BR(st)[k],{order});
 const ROLES=[['cap','Captación'],['exp','Explotación'],['tra','Tránsito'],['nac','Nacimiento de la víctima'],['ate','Atención']];
+const COMITE=new Set(['52001','52405','52560','52585','52356','52835','52354','52473','52490','52696','52390','52250','52427','52621','52079']);
+const CT_COL='#0f766e';
 const trata=engine({id:'tr',tab:'trata',period:per,
+  onMap:(m,ctl)=>{if(!m.getPane('comite')){m.createPane('comite');m.getPane('comite').style.zIndex=455;m.getPane('comite').style.pointerEvents='none';}
+    const g=L.layerGroup();
+    L.geoJSON({type:'FeatureCollection',features:D.geo.features.filter(f=>COMITE.has(f.properties.DIVIPOLA))},{pane:'comite',interactive:false,style:{color:CT_COL,weight:3,opacity:.95,fill:false}}).addTo(g);
+    D.geo.features.filter(f=>COMITE.has(f.properties.DIVIPOLA)).forEach(f=>{const p=X.jus2.cab[f.properties.DIVIPOLA];if(!p)return;
+      L.marker(p,{pane:'comite',interactive:false,keyboard:false,icon:L.divIcon({className:'',html:'<i class="pin" style="background:'+CT_COL+'">✓</i>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(g);});
+    g.addTo(m);ctl.addOverlay(g,'<i class="pin" style="background:'+CT_COL+'">✓</i>Municipios con comité de lucha contra la trata ('+COMITE.size+')');
+    const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{const d=L.DomUtil.create('div','zleg');d.innerHTML='<span><i style="background:'+CT_COL+'"></i>Con comité de lucha contra la trata ('+COMITE.size+' municipios)</span>';return d;};lg.addTo(m);
+    m.on('overlayadd overlayremove',e=>{if(e.layer===g){const el=lg.getContainer();if(el)el.style.display=e.type==='overlayadd'?'':'none';}});},
   filters:[{key:'y',label:'Vigencia',def:'all',opts:[['all','2024 a 2026'],['2024','2024'],['2025','2025'],['2026','2026 (en curso)']]}],
   layers:{
     tot:{lab:'Casos relacionados',title:'Casos de trata relacionados con cada municipio',hint:'Casos en los que el municipio fue lugar de captación, explotación, tránsito, nacimiento o atención de la víctima. Un caso puede relacionarse con varios municipios. De 1 a 4 casos se muestra "menos de 5".',val:(c,st)=>tval(c,'tot',st),minShow:5,fmt:v=>protT(v)},
@@ -777,9 +787,9 @@ const trata=engine({id:'tr',tab:'trata',period:per,
   kpis:st=>{const B=BR(st),h=hidden(st),p=v=>h?'—':pct(v/B.n);
     return [[B.n,'casos identificados',per(st)],[p(B.sexo['Mujer']||0),'víctimas mujeres',h?'protegido (pocos casos)':per(st)],[p(B.mig['Sí']||0),'víctimas migrantes',h?'protegido (pocos casos)':per(st)],[h?'—':B.men,'menores de 18 años',h?'protegido (pocos casos)':per(st)],[p(B.mod['Externa']||0),'trata externa',h?'protegido (pocos casos)':'fuera de Colombia · '+per(st)]];},
   dossier:(st,sel)=>{
-    if(!sel)return `<div class="top"><div><h3>Vista departamental · ${per(st)}</h3><div class="big">Nariño</div><span class="pill">${BR(st).n} casos</span></div></div><p class="maphint">Haga clic en un municipio para ver su relación con los casos.</p><div class="panel"><h3>Relación de los casos con Nariño · ${per(st)}</h3>${brp(st,'rel')}</div>`;
+    if(!sel)return `<div class="top"><div><h3>Vista departamental · ${per(st)}</h3><div class="big">Nariño</div><span class="pill">${BR(st).n} casos</span></div></div><p class="maphint">Haga clic en un municipio para ver su relación con los casos.</p><div class="panel"><h3>Municipios con comité de lucha contra la trata (${COMITE.size})</h3><p class="maphint" style="line-height:1.6">${[...COMITE].map(c=>N[c]).sort((a,b)=>a.localeCompare(b,'es')).map(esc).join(' · ')}</p></div><div class="panel"><h3>Relación de los casos con Nariño · ${per(st)}</h3>${brp(st,'rel')}</div>`;
     const tot=tval(sel,'tot',st);
-    return `<div class="top"><div><h3>Municipio seleccionado · ${per(st)}</h3><div class="big">${esc(N[sel])}</div><span class="pill">${esc(S[sel])}</span></div><button class="btn" type="button" id="trClear">Ver Nariño</button></div>
+    return `<div class="top"><div><h3>Municipio seleccionado · ${per(st)}</h3><div class="big">${esc(N[sel])}</div><span class="pill">${esc(S[sel])}</span> ${COMITE.has(sel)?'<span class="pill" style="background:#0f766e;color:#fff">✓ Cuenta con comité de lucha contra la trata</span>':'<span class="pill">Sin comité de lucha contra la trata registrado</span>'}</div><button class="btn" type="button" id="trClear">Ver Nariño</button></div>
       <div class="mini"><div><b>${protT(tot)}</b><span>casos relacionados</span></div></div>
       <div class="panel"><h3>Papel del municipio en los casos · ${per(st)}</h3>${tot?'<table class="mini-t"><tbody>'+ROLES.map(([k,l])=>[l,tval(sel,k,st)]).filter(x=>x[1]).map(([l,v])=>`<tr><td>${l}</td><td>${protT(v)}</td></tr>`).join('')+'</tbody></table>':'<p class="maphint">Sin casos relacionados en este periodo.</p>'}</div>
       <p class="maphint">Por confidencialidad no se publica el detalle de cada caso.</p>`;},
