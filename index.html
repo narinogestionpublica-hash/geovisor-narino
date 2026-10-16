@@ -210,6 +210,21 @@ table.cal th:first-child{text-align:left}
 .notes{font-size:12.5px;color:var(--muted);display:grid;gap:6px}
 .notes p{margin:0;max-width:115ch}
 footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+
+.vgthead{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-end;margin-bottom:10px}
+.vgtctl{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.vgtctl input{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;min-width:150px}
+table.vgt{width:100%;border-collapse:collapse;font-size:13px}
+table.vgt th,table.vgt td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+table.vgt th:first-child,table.vgt td:first-child,table.vgt th:nth-child(2),table.vgt td:nth-child(2){text-align:left}
+table.vgt th{cursor:pointer;user-select:none;position:sticky;top:0;background:var(--card,#fff);font-size:12px}
+table.vgt th.on{color:#6e3fa3}
+table.vgt td.pos{color:#8a8a8a}
+table.vgt tbody tr:hover{background:#f6f0fb}
+table.vgt td .bar{display:inline-block;height:8px;border-radius:4px;background:#9a6cc6;vertical-align:middle;margin-right:6px}
+table.vgt tfoot td{font-weight:700;border-top:2px solid #6e3fa3}
+.vgstat .tablewrap{max-height:560px;overflow:auto}
+@media print{.vgstat .tablewrap{max-height:none}.vgtctl{display:none}}
 </style>
 </head>
 <body class="inst">
@@ -267,6 +282,12 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
     <aside class="card dossier" id="vgD" aria-live="polite"></aside>
   </section>
   <section class="grid4"><div class="card panel"><h2>¿Cuándo ocurren?</h2><h3>Casos por mes · <span class="pl">Nariño</span> · <span class="per"></span></h3><div id="vgC1"></div></div><div class="card panel"><h2>¿A quiénes afecta?</h2><h3>Curso de vida de la víctima · <span class="pl">Nariño</span> · <span class="per"></span></h3><div id="vgC2"></div></div><div class="card panel"><h2>¿A qué hora?</h2><h3>Franja horaria · <span class="pl">Nariño</span> · <span class="per"></span></h3><div id="vgC3"></div></div><div class="card panel"><h2>¿Dónde y con qué?</h2><h3>Clase de sitio · <span class="pl">Nariño</span> · <span class="per"></span></h3><div id="vgC4"></div></div></section>
+  <section class="card panel vgstat" id="vgT">
+    <div class="vgthead"><div><h2>Estadística general por municipio</h2><p class="maphint" id="vgTsub"></p></div>
+    <div class="vgtctl"><label class="f"><span>Subregión</span><select id="vgTsr"></select></label><label class="f"><span>Buscar municipio</span><input id="vgTq" type="search" placeholder="Ej.: Ipiales"></label><button class="btn" type="button" id="vgTcsv">Descargar tabla (CSV)</button></div></div>
+    <div class="tablewrap"><table class="vgt" id="vgTt"><thead></thead><tbody></tbody><tfoot></tfoot></table></div>
+    <p class="maphint">Responde a los filtros de año y zona de arriba. Haga clic en el título de una columna para ordenar. Por confidencialidad, las cifras de 1 a 4 casos aparecen como "&lt;5" y, cuando una de ellas se podría deducir restando, otra cifra se reserva con "•"; el total no incluye homicidios de mujeres. El porcentaje de Nariño se muestra solo con 5 casos o más.</p>
+  </section>
   <section class="notes"><p><b>Fuente:</b> matriz de delitos con víctima mujer (Policía Nacional), años 2024 a 2026; 2026 con corte parcial.</p><p><b>Zona:</b> se cuenta como rural el caso registrado en zona rural o cuyo lugar del hecho es una vereda o un corregimiento; los demás se cuentan como urbanos. En el mapa, los círculos naranjas muestran los casos urbanos en la cabecera de cada municipio y los azules los corregimientos y centros poblados rurales con 5 casos o más.</p><p><b>Criterios:</b> "Todas" suma violencia intrafamiliar, delitos sexuales, lesiones personales, amenazas y feminicidios; no incluye homicidios de mujeres porque la mayoría de los feminicidios también están registrados como homicidios. Por confidencialidad, los municipios con 1 a 4 casos se muestran como "menos de 5" y los gráficos son departamentales. Las cifras son casos denunciados o registrados, no el total de hechos.</p></section>
 </section>
 
@@ -359,7 +380,7 @@ footer{font-size:12px;color:var(--muted);border-top:1px solid var(--line);paddin
 
   <footer>
     <p><b>Capas de referencia:</b> límites municipales DANE (MGN 2018); corregimientos y veredas DANE/IGAC (capa Veredas 2016 publicada por Esri Colombia; en Pasto corresponde a los corregimientos); comunas de Pasto tomadas de un mapa público de ArcGIS Online, de carácter referencial; centros poblados DANE (datos.gov.co); resguardos y consejos comunitarios ANT. Los límites veredales no son oficiales para fines jurídicos.</p>
-    <p>Elaborado por la Subsecretaría de Gestión Pública, Gobernación de Nariño. Procesamiento de datos y prototipo desarrollados con apoyo de herramientas de inteligencia artificial, con validación del equipo técnico.</p>
+    <p>Elaborado por la Subsecretaría de Gestión Pública, Gobernación de Nariño.</p>
   </footer>
 </div>
 
@@ -747,7 +768,7 @@ function engine(M){
       const c=f.properties.DIVIPOLA;
       l.on('click',()=>{const u=unit(c);st.sel=st.sel===u?null:u;render();});
       l.on('mouseover',()=>l.setStyle({weight:2.2,color:'#231c18'}));l.on('mouseout',()=>styleMap());
-      l.bindTooltip(()=>{const Ly=M.layers[st.layer];return `<b>${esc(NM(unit(c)))}</b><br>${esc(isSub()?'Municipio: '+N[c]:S[c])}<br>${Ly.lab}: <b>${Ly.fmt?Ly.fmt(vals[c]):fmtN(vals[c]||0)}</b>`;},{sticky:true,className:'tip'});}}).addTo(mp);
+      l.bindTooltip(()=>{const Ly=M.layers[st.layer];return `<b>${esc(NM(unit(c)))}</b><br>${esc(isSub()?'Municipio: '+N[c]:S[c])}<br>${Ly.lab}: <b>${Ly.mask&&!isSub()&&Ly.mask(c,st)?'reservado':Ly.fmt?Ly.fmt(vals[c]):fmtN(vals[c]||0)}</b>`;},{sticky:true,className:'tip'});}}).addTo(mp);
     mp.fitBounds(geo.getBounds(),{padding:[10,10]});mp.on('click',()=>mp.scrollWheelZoom.enable());
     labels=L.layerGroup().addTo(mp);circles=L.layerGroup().addTo(mp);
     (window.MAPS=window.MAPS||{})[M.tab]=mp;
@@ -756,14 +777,14 @@ function engine(M){
   }
   const isSub=()=>!!M.subLevel&&st.niv==='sub', unit=c=>isSub()?'S:'+S[c]:c;
   const isHeat=()=>M.layers[st.layer].type==='heat';
-  function styleMap(){if(!geo)return;geo.setStyle(f=>{const c=f.properties.DIVIPOLA,on=st.sel&&inU(c,st.sel),fc=sc.col(vals[c],c);
+  function styleMap(){if(!geo)return;geo.setStyle(f=>{const c=f.properties.DIVIPOLA,on=st.sel&&inU(c,st.sel),Lm=M.layers[st.layer],fc=(Lm.mask&&!isSub()&&Lm.mask(c,st))?M.protCol:sc.col(vals[c],c);
     if(isHeat())return {weight:on?2.8:1.1,color:on?'#111':'#3d3530',opacity:on?1:.8,fillOpacity:0,fillColor:'transparent'};
     return isSub()?{weight:on?2.4:.5,color:on?'#111':fc,opacity:on?1:.9,fillOpacity:.85,fillColor:fc}:{weight:st.sel===c?2.8:.9,color:st.sel===c?'#111':'#4a4039',opacity:st.sel===c?1:.55,fillOpacity:.85,fillColor:fc};});}
   function render(){
     const Ly=M.layers[st.layer];
     vals={};CODES2.forEach(c=>vals[c]=Ly.val(c,st));let sv=null;
     if(isSub()){sv={};CODES2.forEach(c=>sv[S[c]]=(sv[S[c]]||0)+(vals[c]||0));CODES2.forEach(c=>vals[c]=sv[S[c]]);}
-    sc=Ly.type==='heat'?{col:()=>'transparent',items:[]}:Ly.type==='cat'?{col:v=>Ly.colors[v]||ND2,items:Object.entries(Ly.colors).map(([k,c])=>[c,k])}:countScale((sv?Object.values(sv):Object.values(vals)).map(v=>v||0),Ly.minShow||1,M.ramp,M.protCol);
+    sc=Ly.type==='heat'?{col:()=>'transparent',items:[]}:Ly.type==='cat'?{col:v=>Ly.colors[v]||ND2,items:Object.entries(Ly.colors).map(([k,c])=>[c,k])}:countScale((sv?Object.values(sv):Object.values(vals)).map(v=>v||0),Ly.minShow||1,M.ramp,M.protCol);if(Ly.mask&&!isSub()&&sc.items)sc.items=sc.items.map(it=>/protegido/.test(it[1])?[it[0],'1–4 o reservado (protegido)']:it);
     $(M.id+'MT').textContent=(typeof Ly.title==='function'?Ly.title(st):Ly.title)+(M.period?' · '+M.period(st):'');
     $(M.id+'MH').textContent=typeof Ly.hint==='function'?Ly.hint(st):Ly.hint;
     $(M.id+'Lg').innerHTML=Ly.type==='heat'?`<span>Menor concentración</span><i style="display:inline-block;width:160px;height:12px;border-radius:3px;vertical-align:-2px;margin:0 6px;background:linear-gradient(90deg,${Ly.grad.join(',')})"></i><span>Mayor concentración</span>`:sc.items.map(([c,t])=>`<span><i class="sw" style="background:${c}"></i>${t}</span>`).join('');
@@ -872,7 +893,7 @@ const vbg=engine({id:'vg',tab:'vbg',subLevel:true,ramp:['#e4d4f0','#c3a2de','#9a
     ctl.addOverlay(vPl.u,'<i class="pin" style="background:#d9822b"></i>Zona urbana: casos en la cabecera municipal');
     ctl.addOverlay(vPl.g,'<i class="pin" style="background:#2f6f8f"></i>Zona rural: corregimientos y centros poblados (5 casos o más)');
     const lg=L.control({position:'bottomleft'});lg.onAdd=()=>{const d=L.DomUtil.create('div','zleg');d.innerHTML='<span><i style="background:#d9822b"></i>Urbano (cabecera)</span><span><i style="background:#2f6f8f"></i>Rural (corregimiento / centro poblado)</span>';return d;};lg.addTo(m);},
-  onRender:(st)=>{if(!vPl.g)return;
+  onRender:(st)=>{try{window.VGTAB&&window.VGTAB(st);}catch(e){console.error(e);}if(!vPl.g)return;
     vPl.u.clearLayers();
     if(st.z!=='rur'&&st.layer!=='heat'){const U=X.vbgz.Z.urb.m,agg={};U.forEach(r=>{if(dOk(r[1],st)&&yOk(r[2],st)&&sOk(r[0],st))agg[r[0]]=(agg[r[0]]||0)+r[3];});
       const mx=Math.max(1,...Object.values(agg));
@@ -880,24 +901,26 @@ const vbg=engine({id:'vg',tab:'vbg',subLevel:true,ramp:['#e4d4f0','#c3a2de','#9a
         L.circleMarker(p,{pane:'plc',radius:4+16*Math.sqrt(n/mx),color:'#d9822b',weight:1.5,fillColor:'#d9822b',fillOpacity:.35}).bindTooltip(`<b>${esc(N[c])} · zona urbana</b><br>${prot(n)} casos<br><small>Ubicación: cabecera municipal</small>`,{className:'tip'}).addTo(vPl.u);});}
     if(st.z==='urb'){vPl.g.clearLayers();return;}
     cpLoad().then(idx=>{const it=pickBP(X.vbgz.places,st,st.sel).map(r=>[r[0],r[1],r[4]]);vPl.res=placesLayer(vPl.g,idx,it,v=>fmtN(v),'casos');});},
-  layers:{cas:{lab:'Casos',title:st=>'Casos de violencia contra las mujeres por '+(st.niv==='sub'?'subregión':'municipio'),hint:st=>st.niv==='sub'?'Casos con víctima mujer sumados por subregión (13 subregiones). Al agrupar, la mayoría de cifras se muestran exactas; solo las de 1 a 4 casos aparecen como "menos de 5".':'Casos con víctima mujer por municipio. Los municipios con 1 a 4 casos se muestran como "menos de 5" para proteger la confidencialidad. Para ver más cifras exactas, use "Ver por: Subregión".',val:vcount,minShow:5,fmt:v=>prot(v||0)},
+  layers:{cas:{lab:'Casos',title:st=>'Casos de violencia contra las mujeres por '+(st.niv==='sub'?'subregión':'municipio'),hint:st=>st.niv==='sub'?'Casos con víctima mujer sumados por subregión (13 subregiones). Al agrupar, la mayoría de cifras se muestran exactas; solo las de 1 a 4 casos aparecen como "menos de 5".':'Casos con víctima mujer por municipio. Los municipios con 1 a 4 casos se muestran como "menos de 5" para proteger la confidencialidad. Para ver más cifras exactas, use "Ver por: Subregión".',val:vcount,minShow:5,fmt:v=>prot(v||0),mask:(c,st)=>window.VGCELL&&VGCELL(st,c,st.d==='all'?'tot':(+st.d===HOM?'h':'t'+['Violencia intrafamiliar','Delitos sexuales','Lesiones personales','Amenazas','Feminicidio'].indexOf(DL[+st.d])))==='s'},
     heat:{lab:'Mapa de calor',type:'heat',grad:['#f3e8ff','#d8b4fe','#a855f7','#7e22ce','#3b0764'],title:st=>'Mapa de calor de violencias contra las mujeres',hint:st=>'Las zonas más intensas concentran más casos. Ubicación aproximada: los casos urbanos en la cabecera municipal y los rurales en el centro del municipio.',val:vcount,fmt:v=>prot(v||0),
       pts:(st,geo)=>{const out=[],Z=X.vbgz.Z,cen={};geo.getLayers().forEach(l=>cen[l.feature.properties.DIVIPOLA]=l.getBounds().getCenter());
         [['urb',1],['rur',0]].forEach(([z,u])=>{if(st.z!=='all'&&st.z!==z)return;const a={};Z[z].m.forEach(r=>{if(sOk(r[0],st)&&dOk(r[1],st)&&yOk(r[2],st))a[r[0]]=(a[r[0]]||0)+r[3];});
           Object.entries(a).forEach(([c,n])=>{const p=u&&CAB[c]?CAB[c]:cen[c]?[cen[c].lat,cen[c].lng]:null;if(p&&n)out.push([p[0],p[1],n]);});});return out;}}},
-  kpis:st=>{const k=[];const f=st.sel?prot:fmtN;const zt=st.z==='urb'?' · zona urbana':st.z==='rur'?' · zona rural':'';
-    const tot=V.m.filter(r=>sOk(r[0],st)&&dOk(r[1],st)&&yOk(r[2],st)).reduce((s,r)=>s+r[3],0);k.push([f(tot),'casos'+muniTxt(st),(st.d==='all'?'todas las violencias (sin homicidios)':DL[+st.d])+zt]);
+  kpis:st=>{const k=[];const f0=st.sel?prot:fmtN;const F=(v,key)=>{if(!st.sel||isS(st.sel)||!window.VGCELL)return f0(v);const h=VGCELL(st,st.sel,key);return h==='s'?'reservado':h==='p'?'menos de 5':fmtN(v);};const TKEY=i=>i===HOM?'h':'t'+['Violencia intrafamiliar','Delitos sexuales','Lesiones personales','Amenazas','Feminicidio'].indexOf(DL[i]);const zt=st.z==='urb'?' · zona urbana':st.z==='rur'?' · zona rural':'';
+    const tot=V.m.filter(r=>sOk(r[0],st)&&dOk(r[1],st)&&yOk(r[2],st)).reduce((s,r)=>s+r[3],0);k.push([F(tot,st.d==='all'?'tot':TKEY(+st.d)),'casos'+muniTxt(st),(st.d==='all'?'todas las violencias (sin homicidios)':DL[+st.d])+zt]);
     ['Violencia intrafamiliar','Delitos sexuales','Lesiones personales','Amenazas','Feminicidio'].forEach(n=>{const i=DL.indexOf(n);const on=st.d==='all'||+st.d===i;
-      k.push([on?f(V.m.filter(r=>sOk(r[0],st)&&r[1]===i&&yOk(r[2],st)).reduce((s,r)=>s+r[3],0)):'–',n.toLowerCase(),on?(st.sel?NM(st.sel):''):'no incluido en el filtro']);});return k;},
+      k.push([on?F(V.m.filter(r=>sOk(r[0],st)&&r[1]===i&&yOk(r[2],st)).reduce((s,r)=>s+r[3],0),TKEY(i)):'–',n.toLowerCase(),on?(st.sel?NM(st.sel):''):'no incluido en el filtro']);});return k;},
   dossier:(st,sel)=>{
     const head=sel?`<div class="top"><div><h3>${isS(sel)?'Subregión seleccionada':'Municipio seleccionado'}</h3><div class="big">${esc(isS(sel)?sel.slice(2):N[sel])}</div><span class="pill">${esc(SB(sel))}</span></div><button class="btn" type="button" id="vgClear">Ver Nariño</button></div>`:`<div class="top"><div><h3>Vista departamental</h3><div class="big">Nariño</div><span class="pill">64 municipios</span></div></div><p class="maphint">Haga clic en un municipio (o en una subregión, con «Ver por: Subregión») para ver sus casos por tipo y año.</p>`;
-    const YS=YR.map((y,j)=>[y,j]).filter(([y])=>st.y==='all'||String(y)===st.y);
-    const rows=DL.map((d,i)=>[i,d]).filter(([i])=>st.d==='all'?true:i===+st.d).map(([i,d])=>[d,...YS.map(([y,j])=>V.m.filter(r=>inU(r[0],sel)&&r[1]===i&&r[2]===j).reduce((s,r)=>s+r[3],0))]);
+    const YS=(sel&&!isS(sel))?[[st.y==='all'?'2024 a 2026':+st.y,-1]]:YR.map((y,j)=>[y,j]).filter(([y])=>st.y==='all'||String(y)===st.y);
+    const rows=DL.map((d,i)=>[i,d]).filter(([i])=>st.d==='all'?true:i===+st.d).map(([i,d])=>[d,...YS.map(([y,j])=>V.m.filter(r=>inU(r[0],sel)&&r[1]===i&&(j<0?yOk(r[2],st):r[2]===j)).reduce((s,r)=>s+r[3],0))]);
+    const DC=(dn,j,v)=>{if(!sel)return fmtN(v);if(isS(sel)||!window.VGCELL)return prot(v);const i=DL.indexOf(dn),t=['Violencia intrafamiliar','Delitos sexuales','Lesiones personales','Amenazas','Feminicidio'].indexOf(dn);
+      const key=i===HOM?'h':'t'+t;const h=VGCELL(st,sel,key);return h==='s'?'•':h==='p'?'menos de 5':fmtN(v);};
     const zoneTxt=st.z==='urb'?' (zona urbana)':st.z==='rur'?' (zona rural)':'';
     let bx='';if(sel){const bb={},pp={};const sfx=r=>isS(sel)?' ('+N[r[0]]+')':'';pickBP(X.vbgz.barrios,st,sel).forEach(r=>{const k=r[1]+sfx(r);bb[k]=(bb[k]||0)+r[4];});pickBP(X.vbgz.places,st,sel).forEach(r=>{const k=r[1].charAt(0)+r[1].slice(1).toLowerCase()+sfx(r);pp[k]=(pp[k]||0)+r[4];});
       const per=(st.y==='all'?'2024 a 2026':st.y)+' · '+(st.d==='all'?'todas las violencias (sin homicidios)':DL[+st.d]);
       bx=(st.z==='rur'?'':`<div class="panel"><h3>Barrios con más casos (urbano)</h3>${Object.keys(bb).length?bars2(bb,{limit:10,nopct:true}):'<p class="maphint">Ningún barrio con 5 casos o más con estos filtros.</p>'}</div>`)+(st.z==='urb'?'':`<div class="panel"><h3>Corregimientos y veredas con más casos (rural)</h3>${Object.keys(pp).length?bars2(pp,{limit:10,nopct:true}):'<p class="maphint">Ningún lugar rural con 5 casos o más con estos filtros.</p>'}</div>`)+`<p class="maphint">Barrios y lugares rurales: ${esc(per)}. Solo se muestran los que tienen 5 casos o más.</p>`;}
-    return head+`<div class="panel"><h3>Casos por tipo y año${zoneTxt}${muniTxt(st)}</h3><div class="tablewrap"><table class="mini-t"><thead><tr><th>Tipo</th>${YS.map(([y])=>`<th>${y}${y===2026?'*':''}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r[0])}</td>${r.slice(1).map(v=>`<td>${sel?prot(v):fmtN(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="maphint">* 2026 hasta el ${V.corte.split('-').reverse().join('/')}. Los homicidios de mujeres incluyen la mayoría de los feminicidios; no se suman.</p></div>`+bx;},
+    return head+`<div class="panel"><h3>Casos por tipo${sel&&!isS(sel)?'':' y año'}${zoneTxt}${muniTxt(st)}</h3><div class="tablewrap"><table class="mini-t"><thead><tr><th>Tipo</th>${YS.map(([y])=>`<th>${y}${y===2026?'*':''}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r[0])}</td>${r.slice(1).map((v,jj)=>`<td>${DC(r[0],YS[jj][1],v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="maphint">* 2026 hasta el ${V.corte.split('-').reverse().join('/')}. Los homicidios de mujeres incluyen la mayoría de los feminicidios; no se suman.${sel&&!isS(sel)?' «•» = cifra reservada para que no se pueda deducir otra menor de 5.':''}</p></div>`+bx;},
   charts:st=>{
     document.querySelectorAll('#tab-vbg .pl').forEach(x=>x.textContent=st.sel?NM(st.sel):'Nariño');
     const tot=V.m.filter(r=>sOk(r[0],st)&&dOk(r[1],st)&&yOk(r[2],st)).reduce((s,r)=>s+r[3],0);
@@ -909,6 +932,89 @@ const vbg=engine({id:'vg',tab:'vbg',subLevel:true,ramp:['#e4d4f0','#c3a2de','#9a
       ['vgC3',bars2(b('franja'),{order:['Madrugada (0-5)','Mañana (6-11)','Tarde (12-17)','Noche (18-23)','Sin dato']})+'<h3 style="margin-top:12px">Día de la semana</h3>'+bars2(b('dia'),{order:['lunes','martes','miercoles','jueves','viernes','sabado','domingo']})],
       ['vgC4',bars2(b('sitio'),{limit:6})+'<h3 style="margin-top:12px">Tipo de arma o medio</h3>'+bars2(b('arma'),{limit:6})]];}
 });
+
+
+/* Supresión secundaria: evita que una cifra de 1 a 4 se deduzca restando totales.
+   cells: [{v, h}] (h: 'p' primaria, 's' secundaria, '' visible); eqs: listas de [índice, coeficiente] cuya suma ponderada es conocida. */
+window.SUPP=function(cells,eqs){
+  cells.forEach(c=>{if(c.v>0&&c.v<5)c.h=c.h||'p';});
+  const lo=c=>c.h==='p'?1:5, hi=c=>c.h==='p'?4:Infinity;
+  for(let it=0;it<200;it++){let ch=false;
+    for(const e of eqs){const H=e.filter(([i])=>cells[i].h);if(!H.length)continue;
+      const S=H.reduce((s,[i,k])=>s+k*cells[i].v,0);let leak=false;
+      for(const [i,k] of H){let a=0,b=0;for(const [j,kj] of H){if(j===i)continue;const l=kj*lo(cells[j]),u=kj*hi(cells[j]);a+=Math.min(l,u);b+=Math.max(l,u);}
+        const r1=(S-b)/k,r2=(S-a)/k;let L=Math.max(lo(cells[i]),Math.min(r1,r2)),U=Math.min(hi(cells[i]),Math.max(r1,r2));
+        if(isFinite(L)&&isFinite(U)&&L>=U){leak=true;break;}}
+      if(!leak)continue;
+      const C=e.map(([i])=>i).filter(i=>!cells[i].h&&cells[i].v>0&&!cells[i].fixed);if(!C.length)continue;
+      C.sort((x,y)=>{const a=cells[x].v,b=cells[y].v;return ((a<8)-(b<8))||a-b;});cells[C[0]].h='s';ch=true;}
+    if(!ch)break;}
+  return cells;};
+/* ---------- VBG: estadística general por municipio ---------- */
+(function(){
+  const T=document.getElementById('vgTt');if(!T)return;
+  const TIP=['Violencia intrafamiliar','Delitos sexuales','Lesiones personales','Amenazas','Feminicidio'],TI=TIP.map(n=>DL.indexOf(n));
+  const SH={'Violencia intrafamiliar':'Intrafamiliar','Delitos sexuales':'Sexuales','Lesiones personales':'Lesiones','Amenazas':'Amenazas','Feminicidio':'Feminicidio'};
+  const srSel=document.getElementById('vgTsr'),q=document.getElementById('vgTq');
+  const SRS=[...new Set(CODES2.map(c=>S[c]))].sort((a,b)=>a.localeCompare(b,'es'));
+  srSel.innerHTML='<option value="">Todas</option>'+SRS.map(x=>`<option>${esc(x)}</option>`).join('');
+  const pm=v=>v>0&&v<5?'<5':fmtN(v), key=v=>v>0&&v<5?2.5:v, cv=(r,k)=>r.h&&r.h[k]==='s'?'•':pm(val(r,k)), ck=(r,k)=>r.h&&r.h[k]?(r.h[k]==='s'?6:2.5):val(r,k);
+  let ord={k:'tot',dir:-1},last=null,rows=[],cols=[];
+  const CACHE={};
+  function cube(st){const ck=st.y+'|'+st.z+'|'+V.m.length+'|'+(V.m[0]||[]).join(',');if(CACHE[ck])return CACHE[ck];
+    const yy=YR.map((y,j)=>[y,j]).filter(([y])=>st.y==='all'||String(y)===st.y).map(x=>x[1]),ALL=st.y==='all';
+    const A={};CODES2.forEach(c=>A[c]={c,n:N[c],s:S[c],tot:0,t:TI.map(()=>0),y:YR.map(()=>0),ty:TI.map(()=>YR.map(()=>0)),hom:0,hy:YR.map(()=>0)});
+    V.m.forEach(([c,d,y,n])=>{const a=A[c];if(!a||!yy.includes(y))return;if(d===HOM){a.hom+=n;a.hy[y]+=n;return;}a.tot+=n;a.y[y]+=n;const k=TI.indexOf(d);if(k>=0){a.t[k]+=n;a.ty[k][y]+=n;}});
+    const R=Object.values(A);
+    const g=(r,k)=>k==='tot'?r.tot:k==='h'?r.hom:k[0]==='y'?r.y[+k.slice(1)]:k[0]==='t'?r.t[+k.slice(1)]:k[0]==='c'?r.ty[+k.split('_')[0].slice(1)][+k.split('_')[1]]:r.hy[+k.slice(2)];
+    const ks=['tot','h',...TI.map((_,k)=>'t'+k)];if(ALL){YR.forEach((_,j)=>ks.push('y'+j));}
+    const cells=[],ix={};R.forEach((r,ri)=>ks.forEach(k=>{ix[ri+'|'+k]=cells.length;cells.push({v:g(r,k),h:''});}));
+    const I=(ri,k)=>ix[ri+'|'+k],eqs=[];
+    R.forEach((r,ri)=>{eqs.push([[I(ri,'tot'),1],...TI.map((_,k)=>[I(ri,'t'+k),-1])]);
+      if(ALL)eqs.push([[I(ri,'tot'),1],...YR.map((_,j)=>[I(ri,'y'+j),-1])]);});
+    ks.forEach(k=>{eqs.push(R.map((r,ri)=>[I(ri,k),1]));[...new Set(R.map(r=>r.s))].forEach(sr=>eqs.push(R.map((r,ri)=>[r,ri]).filter(([r])=>r.s===sr).map(([r,ri])=>[I(ri,k),1])));});
+    SUPP(cells,eqs);R.forEach((r,ri)=>{r.h={};ks.forEach(k=>{const h=cells[I(ri,k)].h;if(h)r.h[k]=h;});});
+    return CACHE[ck]=R;}
+  window.VGCELL=(st,c,k)=>{const r=cube(st).find(x=>x.c===c);return r?(r.h[k]||''):'';};
+  function build(st){
+    rows=cube(st).map(r=>Object.assign({},r));
+    const dep=rows.reduce((s,r)=>s+r.tot,0);rows.forEach(r=>r.pct=dep?r.tot/dep*100:0);
+    cols=[['n','Municipio'],['s','Subregión'],['tot','Total'],['pct','% de Nariño']];
+    if(st.y==='all')YR.forEach((y,j)=>cols.push(['y'+j,String(y)+(y===2026?'*':'')]));
+    TIP.forEach((n,k)=>cols.push(['t'+k,SH[n]]));
+    return dep;}
+  const val=(r,k)=>k==='n'||k==='s'?r[k]:k==='tot'||k==='pct'?r[k]:k[0]==='y'?r.y[+k.slice(1)]:r.t[+k.slice(1)];
+  function draw(){
+    if(!last)return;const st=last,dep=build(st);
+    const sr=srSel.value,qq=nzz(q.value||'');
+    let R=rows.filter(r=>(!sr||r.s===sr)&&(!qq||nzz(r.n).includes(qq)));
+    const k=ord.k;R.sort((a,b)=>{const va=val(a,k),vb=val(b,k);
+      if(k==='n'||k==='s')return ord.dir*String(va).localeCompare(String(vb),'es')||a.n.localeCompare(b.n,'es');
+      const kk=k==='pct'?'tot':k,ka=ck(a,kk),kb=ck(b,kk);return ord.dir*(ka-kb)||a.n.localeCompare(b.n,'es');});
+    const mx=Math.max(1,...rows.map(r=>r.tot));
+    T.tHead.innerHTML='<tr>'+cols.map(([k,l])=>`<th data-k="${k}" class="${k===ord.k?'on':''}" title="Ordenar por ${esc(l)}">${esc(l)}${k===ord.k?(ord.dir<0?' ▼':' ▲'):''}</th>`).join('')+'</tr>';
+    T.tBodies[0].innerHTML=R.map(r=>'<tr>'+cols.map(([k])=>{const v=val(r,k);
+      if(k==='n')return `<td><b>${esc(v)}</b></td>`;if(k==='s')return `<td>${esc(v)}</td>`;
+      if(k==='tot')return `<td>${!r.h.tot?`<span class="bar" style="width:${Math.max(2,Math.round(60*r.tot/mx))}px"></span>`:''}${cv(r,k)}</td>`;
+      if(k==='pct')return `<td class="pos">${!r.h.tot&&r.tot>=5?v.toLocaleString('es-CO',{maximumFractionDigits:1,minimumFractionDigits:1})+' %':'–'}</td>`;
+      return `<td>${cv(r,k)}</td>`;}).join('')+'</tr>').join('')||`<tr><td colspan="${cols.length}">Ningún municipio coincide con la búsqueda.</td></tr>`;
+    const sum=f=>R.reduce((s,r)=>s+f(r),0),lab=sr||(qq?'Municipios filtrados':'Nariño');
+    const ft=cols.map(([k])=>{if(k==='n')return `<td>${esc(lab==='Nariño'?'Total Nariño':'Total '+lab)}</td>`;if(k==='s')return `<td>${R.length} municipios</td>`;
+      if(k==='pct'){const t=sum(r=>r.tot);return `<td>${t>=5&&dep?(t/dep*100).toLocaleString('es-CO',{maximumFractionDigits:1,minimumFractionDigits:1})+' %':'–'}</td>`;}
+      return `<td>${pm(sum(r=>val(r,k)))}</td>`;}).join('');
+    T.tFoot.innerHTML=(qq||sr)?'':'<tr>'+ft+'</tr>';
+    const z=st.z==='urb'?' · zona urbana':st.z==='rur'?' · zona rural':'';
+    document.getElementById('vgTsub').textContent=`Casos con víctima mujer por municipio · ${st.y==='all'?'2024 a 2026':st.y}${z} · ${fmtN(dep)} casos en Nariño (sin homicidios). 2026 hasta el ${V.corte.split('-').reverse().join('/')}.`;
+    window.VGTROWS={R,cols,st};}
+  T.tHead.addEventListener('click',e=>{const th=e.target.closest('th');if(!th)return;const k=th.dataset.k;ord=ord.k===k?{k,dir:-ord.dir}:{k,dir:k==='n'||k==='s'?1:-1};draw();});
+  srSel.addEventListener('change',draw);q.addEventListener('input',draw);
+  document.getElementById('vgTcsv').addEventListener('click',()=>{const o=window.VGTROWS;if(!o)return;
+    const head=o.cols.map(c=>c[1]);const lines=[head,...o.R.map(r=>o.cols.map(([k])=>{const v=val(r,k);if(k==='n'||k==='s')return v;if(k==='pct')return !r.h.tot&&r.tot>=5?v.toFixed(1).replace('.',','):'';return r.h[k]==='s'?'reservado':v>0&&v<5?'<5':String(v);}))];
+    const csv='﻿'+lines.map(l=>l.map(x=>/[;"\n]/.test(x)?'"'+String(x).replace(/"/g,'""')+'"':x).join(';')).join('\r\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    a.download='vbg_estadistica_municipio_'+(o.st.y==='all'?'2024-2026':o.st.y)+(o.st.z!=='all'?'_'+o.st.z:'')+'.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);});
+  window.VGTAB=st=>{last={y:st.y,z:st.z};draw();};
+})();
 try{if(typeof map!=='undefined'&&map&&window.POLCTRL)JUSOVL(map,window.POLCTRL);}catch(e){}
 /* ---------- Pólvora: zona, lugares rurales y barrios ---------- */
 (function(){
